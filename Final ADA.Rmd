@@ -1,0 +1,392 @@
+---
+title: "Danyi_ADA_Final_Project"
+author: "Danyi_Li_478644"
+date: "10/24/2020"
+output: html_document
+---
+
+
+
+# Missing data 1
+# There are skip patterns in the survey questions.
+```{r warning=FALSE}
+
+library(tidyverse)
+library(dplyr)
+library(readxl)
+
+# Importing data from local directory
+library(readxl)
+SurveyNew <- read_excel("SurveyNew.xlsx", 
+    na = "space")
+View(SurveyNew)
+
+SurveyNew <- SurveyNew %>%
+        select(`StudentN`, `gender`, `race`, `White`, `Male_S`, `Female_S`, `S_T_Ratio`, `laws`, `train_level1`, `train_level2`, `train_level3`, `nurse_train`, `nurse_class`, `staff_available`, `team_has`, `team_meeting`, `tdp_has`, `tdp_assist`, `tdp_recognize`, `tdp_campus`, `tdp_field`, `tdp_emergency`, `tdp_communicate`, `environment_support`, `privacy_protect`, `place_pe`, `aid_pe`, `monitor_pe`, `hypoglycemia_pe`, `discontinue_pe`, `discontinue_pe`, `nurse_tasks`, `nurse_dmmp`, `nurse_ihcp`, `nurse_ecphh`, `nurse_team`, `nurse_parents`, `nurse_tasks`, `nurse_document`, `ems`, `nurse_agency`, `nurse_communicate`, `effect_student`, `effect_parent`, `effect_student_teacher`, `effect_teacher_parent`, `effect_bully`, `effect_overall`)
+
+SurveyNew[sapply(SurveyNew, is.character)] <- lapply(SurveyNew[sapply(SurveyNew, is.character)],as.factor)
+str(SurveyNew)
+
+sum(is.na(SurveyNew))
+library(VIM)
+library(mice)
+library(lattice)
+imp <- mice(SurveyNew, m=5, seed=123)
+imp
+
+```
+
+# Check with the data.
+```{r}
+imp$imp$tdp_assist
+
+Survey_imp<- mice::complete(imp,1)
+
+
+stripplot(imp, team_meeting~.imp, jit = TRUE, fac=0.5, pch=3)
+```
+# Data cleaning
+
+# Controls
+```{r warning = FALSE}
+
+# Control Variables
+## Individual level
+# gender
+# race
+
+# School/district level: all continuous variables
+
+class(Survey_imp$StudentN)
+
+class(Survey_imp$White)
+
+class(Survey_imp$Male_S)
+
+class(Survey_imp$Female_S)
+
+class(Survey_imp$S_T_Ratio)
+
+```
+
+# IVs
+```{r}
+
+# Independent variable
+
+# Diabetes care related policy/law knowledge of school personal
+
+Survey_cleaned <- Survey_imp %>%
+mutate(laws = recode_factor(laws, "Don't know" = NA_character_))  %>%
+# School Health team training: three levels
+mutate(train_level1 = recode_factor(train_level1, "Don't know" = NA_character_)) %>%
+mutate(train_level2 = recode_factor(train_level2, "Don't know" = NA_character_)) %>%
+mutate(train_level3 = recode_factor(train_level3, "Don't know" = NA_character_)) %>%
+# Q38 School nurse provides ongoing education and training as the school year progresses for school teachers and staff, as needed.
+mutate(nurse_train = recode_factor(nurse_train, "Don't know" = NA_character_)) %>%
+# Q 40 School nurse visits the classroom teachers routinely to provide support and counseling and to address concerns regarding the impact of diabetes on the student in the classroom.
+mutate(nurse_class = recode_factor(nurse_class, "Don't know" = NA_character_))%>%
+        # Q 21 Besides school nurse, school has other trained staff available for students with diabetes when the student is in school or participating in school-sponsored activities and events.
+mutate(staff_available = recode_factor(staff_available, "Don't know" = NA_character_)) %>%
+# Q16 School health team
+mutate(team_has = recode_factor(team_has,
+                                        `Yes` = 1,
+                                        `No` = 0)) %>%
+# Q 17 Meetings for school diabetes management are held regularly by the school health team, and communications among team members are frequent and effective.
+mutate(team_meeting = recode_factor(team_meeting,"Don't know" = NA_character_)) %>%
+# Q 43 Nonmedical school personnel who receive Level 3 training, called “trained diabetes personnel”, could be supervised by the school nurse to perform diabetes care tasks in school. In your school, these individuals may be known as unlicensed assistive personnel, assistive personnel, paraprofessionals, trained nonmedical personnel, or trained school staff.
+mutate(tdp_has = recode_factor(tdp_has,
+                                        `Yes` = 1,
+                                        `No` = 0))%>%
+# IVs Con'd
+# Q 45 Trained diabetes personnel know how to recognize the signs and symptoms of hypoglycemia and hyperglycemia, where routine and emergency supplies are kept, how to implement the student’s Emergency Care Plans for Hypoglycemia and Hyperglycemia, and how to activate Emergency Medical Services in case of a diabetes emergency.
+mutate(tdp_assist = recode_factor(tdp_assist, "Don't know" = NA_character_))%>%
+# Q 45 Trained diabetes personnel know how to recognize the signs and symptoms of hypoglycemia and hyperglycemia, where routine and emergency supplies are kept, how to implement the student’s Emergency Care Plans for Hypoglycemia and Hyperglycemia, and how to activate Emergency Medical Services in case of a diabetes emergency.
+mutate(tdp_recognize = recode_factor(tdp_recognize, "Don't know" = NA_character_))%>%
+# Q 46 Trained diabetes personnel are available on campus during regular school hours and when the student participates in school-sponsored extracurricular activities held before or after school, as determined by the student’s health care and education plans.
+mutate(tdp_campus = recode_factor(tdp_campus, "Don't know" = NA_character_))%>%
+# Q 47 Trained diabetes personnel accompany the student on field trips or to off-campus school-sponsored sports events and activities, as determined by the student’s health care and education plans.
+mutate(tdp_field = recode_factor(tdp_field, "Don't know" = NA_character_)) %>%
+# Q 48 Trained diabetes personnel knows their role in helping the student with diabetes in a disaster, lockdown, or emergency situation.
+mutate(tdp_emergency = recode_factor(tdp_emergency, "Don't know" = NA_character_)) %>%
+# Q 49 Trained diabetes personnel communicate directly and regularly with the school nurse or the supervising health care professional, and ask for help or review when uncertain about any task they have been asked to perform.
+mutate(tdp_communicate = recode_factor(tdp_communicate, "Don't know" = NA_character_)) %>%
+# Environment
+# Q 22 School has a supportive environment for students with diabetes to manage their diabetes safely and effectively at school. This includes enabling students to: monitor blood glucose levels; administer insulin and other medications; eat snacks for routine diabetes management and for treating low blood glucose levels; have bathroom privileges and access to drinking water; participate in all school-sponsored activities; and provide accommodations for health care appointments or illnesses.
+mutate(environment_support = recode_factor(environment_support, "Don't know" = NA_character_)) %>%
+# Q 23 The confidentiality and right to privacy of students with diabetes are protected at school.
+mutate(privacy_protect = recode_factor(privacy_protect, "Don't know" = NA_character_)) %>%
+# Q 24 Students with diabetes are designated a safe place to keep their diabetes supplies, including their insulin pump if they remove it during physical activity.
+mutate(place_pe = recode_factor(place_pe, "Don't know" = NA_character_)) %>%
+# Q 25 Blood glucose monitoring equipment, a quick-acting form of glucose, and other diabetes supplies in the first aid pack are available at all physical activity sites.
+mutate(aid_pe = recode_factor(aid_pe, "Don't know" = NA_character_))%>%
+# Q 26 Students with diabetes are allowed to monitor blood glucose levels and administer insulin in a PE class.
+mutate(monitor_pe = recode_factor(monitor_pe, "Don't know" = NA_character_))%>%
+# Q 27 Teachers and staff are aware that hypoglycemia (low blood glucose) can occur during and after physical activity
+mutate(hypoglycemia_pe = recode_factor(hypoglycemia_pe, "Don't know" = NA_character_)) %>%
+# Q 28 Students with diabetes are allowed to discontinue physical activity if hypoglycemia (low blood glucose) is suspected in a PE class.
+mutate(discontinue_pe = recode_factor(discontinue_pe, "Don't know" = NA_character_))%>%
+# Q 29 Students with diabetes are encouraged to have the same level of participation in physical activities and sports as other students, except to meet their medical needs.
+mutate(participate_pe = recode_factor(participate_pe, "Don't know" = NA_character_)) %>%
+# Q 35 School nurse obtains materials and medical supplies (including the emergency supply kit) for performing diabetes care tasks from the parents/guardians, and designate a storage location for daily and emergency use.
+mutate(nurse_tasks = recode_factor(nurse_tasks, "Don't know" = NA_character_))%>%
+# Q 30 School nurse obtains and reviews student’s doctor’s orders or current Diabetes Medical Management Plan (if available) along with other pertinent information from the student’s parent/guardian.
+mutate(nurse_dmmp = recode_factor(nurse_dmmp, "Don't know" = NA_character_))%>%
+# Q 31 Using the doctor’s orders or current Diabetes Medical Management Plan (if available) and information obtained from a thorough nursing assessment, school nurse develops an Individualized Health Care Plan for student with diabetes.
+mutate(nurse_ihcp = recode_factor(nurse_ihcp, "Don't know" = NA_character_))%>%
+
+# Q 32 School nurse develops Emergency Care Plans for Hypoglycemia and Hyperglycemia based on doctor’s orders or current Diabetes Medical Management Plan (if available).
+mutate(nurse_ecphh = recode_factor(nurse_ecphh, "Don't know" = NA_character_))%>%
+
+# Q 33 School nurse implements and monitors compliance with Individualized Health Care Plan and Emergency Care Plans for Hypoglycemia and Hyperglycemia and facilitates follow-up meetings of the school health team to discuss concerns, receive updates, and evaluate the need for changes to the student’s plans.
+mutate(nurse_team = recode_factor(nurse_team, "Don't know" = NA_character_))%>%
+
+# Q 34 School nurse notifies parents/guardians and the student about which school personnel will be informed about the student’s diabetes diagnosis and who will be trained to provide diabetes care.
+mutate(nurse_parents = recode_factor(nurse_parents, "Don't know" = NA_character_))%>%
+# Q 36 School nurse performs or assists the student with routine and emergency diabetes care tasks, including blood glucose monitoring, urine or blood ketone testing, insulin and other medication administration, carbohydrate counting, and glucagon administration.
+mutate(nurse_tasks = recode_factor(nurse_tasks, "Don't know" = NA_character_))%>%
+# Q 37 School nurse maintains accurate documentation of all diabetes care provided at school, and accurate documentation of communications with the student, the parents/guardians, and the student’s personal diabetes health care team.
+mutate(nurse_document
+ = recode_factor(nurse_document
+, "Don't know" = NA_character_)) %>%
+
+# Q 18 School has developed and implemented the policy for activation of Emergency Medical Services in case of a diabetes emergency on or off the school campus.
+mutate(ems = recode_factor(ems
+, "Don't know" = NA_character_)) %>%
+# Communication/cooperation
+# Q 41 School nurse collaborates with coworkers and outside agencies (e.g., school district registered dietitian nutritionist, food service manager, and food service personnel) to obtain nutrition information for the parents/guardians and the student.
+mutate(nurse_agency = recode_factor(nurse_agency
+, "Don't know" = NA_character_)) %>%
+
+# Q 42 School nurse communicates with the student’s parents/guardians and—with their permission—communicate with the student’s personal diabetes health care team about progress as well as any concerns about the student’s diabetes management or health status, such as hypoglycemia episodes, hyperglycemia, general attitude, emotional issues, and self-management.
+mutate(nurse_communicate
+ = recode_factor(nurse_communicate
+, "Don't know" = NA_character_)) %>%
+# Q 57 Student Engagement
+mutate(effect_student
+ = recode_factor(effect_student
+, "Don't know" = NA_character_))%>%
+# Q58 Parent Engagement
+mutate(effect_parent
+ = recode_factor(effect_parent
+, "Don't know" = NA_character_))%>%
+# Q 59 Student-teacher Communications
+mutate(effect_student_teacher
+ = recode_factor(effect_student_teacher
+, "Don't know" = NA_character_))%>%
+
+# Q 60 Teacher-parent communications
+mutate(effect_teacher_parent
+ = recode_factor(effect_teacher_parent
+, "Don't know" = NA_character_))%>%
+# Mental Health/ Right
+# Q 55 Student Stress Levels
+mutate(effect_stress
+ = recode_factor(effect_stress
+, "Don't know" = NA_character_))%>%
+# Q 54 Student Bullying Prevention
+mutate(effect_bully
+ = recode_factor(effect_bully
+, "Don't know" = NA_character_))%>%
+# Outcome variables
+# Q 50 Overall, how effective do you feel the diabetes management at your school has been?
+mutate(effect_overall
+ = recode_factor(effect_overall
+, "Don't know" = NA_character_))%>%
+# No change
+# Slightly effective
+# Moderately effective
+# Very effective
+# Did not using the following outcomes yet.
+        
+# Q 51 Student Glycemic Control
+mutate(effect_glycemic
+ = recode_factor(effect_glycemic
+, "Don't know" = NA_character_)) %>%
+# Q 52 Student Physical Health
+mutate(effect_physical
+ = recode_factor(effect_physical
+, "Don't know" = NA_character_)) %>%
+# Q 53 Student Mental Health
+mutate(effect_mental
+ = recode_factor(effect_mental
+, "Don't know" = NA_character_))
+
+summary(Survey_cleaned)
+```
+
+
+# Exploratory factor analysis with ordinal categorial data
+# Data reduce tool
+
+```{r warning=FALSE}
+wants <- c("GPArotation", "mvtnorm", "polycor", "psych")
+has   <- wants %in% rownames(installed.packages())
+if(any(!has)) install.packages(wants[!has])
+
+
+Survey_Factor <- Survey_cleaned %>%
+        select(`train_level1`, `train_level2`, `train_level3`
+, `nurse_train`, `nurse_class`, `staff_available`,  `tdp_assist`, `tdp_campus`, `tdp_field`, `tdp_emergency`, `tdp_communicate`, `environment_support`, `privacy_protect`, `place_pe`, `aid_pe`, `monitor_pe`, `hypoglycemia_pe`, `discontinue_pe`, `discontinue_pe`, `nurse_tasks`, `nurse_ihcp`, `nurse_ecphh`, `nurse_team`, `nurse_parents`, `nurse_tasks`, `nurse_document`, `ems`, `nurse_agency`, `nurse_communicate`)
+
+
+
+library(polycor)               # for hetcor()
+library(psych)
+
+Survey_Factor <- data.matrix(Survey_Factor)
+Survey_Factor <- 4 - Survey_Factor
+
+
+des = describe(Survey_Factor)
+knitr::kable(des[,c("min", "max", "mean", "median", "skew", "kurtosis")], main = "Data Summary")
+
+```
+
+
+```{r warning = FALSE}
+
+library(polycor) 
+library(psych) # for hetcor()
+
+# Person's correlation
+
+pear_cor = cor(Survey_Factor)
+cor.plot(pear_cor, numbers=T, upper=FALSE, main = "Pearson Correlation", show.legend = FALSE)
+
+# Polychoric correlation
+
+## Polychoric correlation
+poly_cor = polychoric(Survey_Factor)
+rho = poly_cor$rho
+save(rho, file = "polychoric")
+### Thresholds/Scaling results
+poly_cor$tau
+
+cor.plot(poly_cor$rho, numbers=T, upper=FALSE, main = "Polychoric Correlation", show.legend = FALSE)
+
+# The computed correlation matrices are visualized above. Positive values are shaded in blue while negative ones in red, and the greater the absolute value of the correlation, the deeper the color.
+
+# It can be observed that the colored patchs have very similar patterns, while the polychoric approach suggests a stronger association. Pearson and polychoric correlations behave similarly for this dataset, because the survey design of likert-type scales makes a uniform assumption justifiable. As a result, factor analysis based on those two correlation matrices is likely to give similar reconstruction of the original data structure.
+
+```
+
+```{r warning= FALSE}
+library(psych)
+library(GPArotation)
+
+# Pre-test 
+# Results is just OK
+cortest.bartlett(Survey_Factor)
+KMO(Survey_Factor)
+
+Survey_Factor <- data.matrix(Survey_Factor)
+# Test the sample adequacy
+
+fap <- fa.parallel.poly(Survey_Factor)
+
+fa.parallel(rho, fm="pa", fa="fa", main = "Scree Plot")
+
+```
+
+```{r warning=FALSE}
+
+poly_model = fa(Survey_Factor, nfactor=4, cor="poly", fm="mle", rotate = "none")
+save(poly_model, file = "poly_model")
+
+poly_model$loadings
+
+```
+
+
+```{r}
+
+load("poly_model")
+# Cluster analysis plot
+fa.diagram(poly_model)
+
+
+```
+
+
+```{r}
+# After checking with the survey questions with more than one loading on factors, I decided to delete those questions with split factors and re-run the analysis.
+# 2, 4, 17, 18, 20, 22
+poly_model1 = fa(Survey_Factor[, -c(2, 4, 17, 18, 20, 22)], nfactor=4, cor="poly", fm="mle", rotate = "none")
+
+save(poly_model1, file = "poly_model1")
+
+poly_model1$loadings
+
+```
+
+
+```{r}
+load("poly_model1")
+# Cluster analysis plot
+fa.diagram(poly_model1, Phi=NULL,fe.results=NULL,sort=TRUE,labels=NULL,cut=.3,
+     simple=TRUE, errors=FALSE,g=FALSE,digits=1,e.size=.05,rsize=.15,side=2, cex=NULL,marg=c(.5,.5,1,.5),adj=1,ic=FALSE)
+```
+
+
+```{r warning = FALSE}
+
+# Reliability
+# Results is not good due to small sample size
+factor1TDP = c(2, 4:9, 15:17)
+factor2Plan = c(13, 18)
+factor3Nurse = c(3, 11, 17, 19)
+factor4Communication = c(1, 20, 21)
+psych::alpha(Survey_Factor[, factor1TDP])
+psych::alpha(Survey_Factor[, factor2Plan])
+psych::alpha(Survey_Factor[, factor3Nurse])
+psych::alpha(Survey_Factor[, factor4Communication])
+
+
+```
+```{r warning= FALSE}
+
+Survey_cleaned$f1TDP = apply(Survey_Factor[, factor1TDP], 1, mean)
+Survey_cleaned$f2Plan = apply(Survey_Factor[, factor2Plan], 1, mean)
+Survey_cleaned$f3Nurse = apply(Survey_Factor[, factor3Nurse], 1, mean)
+Survey_cleaned$f4Communication = apply(Survey_Factor[, factor4Communication], 1, mean)
+
+
+table(Survey_cleaned$f3Nurse)
+
+```
+```{r warning=FALSE}
+Complete <- Survey_cleaned %>%
+  drop_na()
+
+MissingRate <-  1- nrow(Complete)/nrow(Survey_cleaned)
+#Look at missing rate
+MissingRate
+
+
+pacman::p_load(readr, tidyverse, nnet, MASS, funModeling, brant)
+
+summary(Complete$effect_overall)
+levels(Complete$effect_overall)
+
+Complete$effect_overall <- relevel(Complete$effect_overall, ref = "Slightly effective")
+
+mod <- multinom(effect_overall ~ f1TDP + f2Plan + f3Nurse + f4Communication + effect_stress + gender + race + effect_physical + effect_mental, data=Complete)
+
+
+summary(mod)
+exp(coef(mod))
+exp(confint(mod, level=0.95))
+
+
+
+```
+
+
+
+
+
+
+
+
+
