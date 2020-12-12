@@ -37,7 +37,7 @@ imp
 ```
 
 # Check with the data.
-```{r}
+```{r warning=FALSE}
 imp$imp$tdp_assist
 
 Survey_imp<- mice::complete(imp,1)
@@ -51,11 +51,13 @@ stripplot(imp, team_meeting~.imp, jit = TRUE, fac=0.5, pch=3)
 ```{r warning = FALSE}
 
 # Control Variables
+
 ## Individual level
+
 # gender
 # race
 
-# School/district level: all continuous variables
+## School/district level: all continuous variables
 
 class(Survey_imp$StudentN)
 
@@ -70,7 +72,7 @@ class(Survey_imp$S_T_Ratio)
 ```
 
 # IVs
-```{r}
+```{r warning=FALSE}
 
 # Independent variable
 
@@ -107,28 +109,26 @@ mutate(tdp_recognize = recode_factor(tdp_recognize, "Don't know" = NA_character_
 mutate(tdp_campus = recode_factor(tdp_campus, "Don't know" = NA_character_))%>%
 # Q 47 Trained diabetes personnel accompany the student on field trips or to off-campus school-sponsored sports events and activities, as determined by the student’s health care and education plans.
 mutate(tdp_field = recode_factor(tdp_field, "Don't know" = NA_character_)) %>%
-# Q 48 Trained diabetes personnel knows their role in helping the student with diabetes in a disaster, lockdown, or emergency situation.
+ # Q 48 Trained diabetes personnel knows their role in helping the student with diabetes in a disaster, lockdown, or emergency situation.
 mutate(tdp_emergency = recode_factor(tdp_emergency, "Don't know" = NA_character_)) %>%
-# Q 49 Trained diabetes personnel communicate directly and regularly with the school nurse or the supervising health care professional, and ask for help or review when uncertain about any task they have been asked to perform.
+ # Q 49 Trained diabetes personnel communicate directly and regularly with the school nurse or the supervising health care professional, and ask for help or review when uncertain about any task they have been asked to perform.
 mutate(tdp_communicate = recode_factor(tdp_communicate, "Don't know" = NA_character_)) %>%
-# Environment
-# Q 22 School has a supportive environment for students with diabetes to manage their diabetes safely and effectively at school. This includes enabling students to: monitor blood glucose levels; administer insulin and other medications; eat snacks for routine diabetes management and for treating low blood glucose levels; have bathroom privileges and access to drinking water; participate in all school-sponsored activities; and provide accommodations for health care appointments or illnesses.
+ # Environment
+ # Q 22 School has a supportive environment for students with diabetes to manage their diabetes safely and effectively at school. This includes enabling students to: monitor blood glucose levels; administer insulin and other medications; eat snacks for routine diabetes management and for treating low blood glucose levels; have bathroom privileges and access to drinking water; participate in all school-sponsored activities; and provide accommodations for health care appointments or illnesses.
 mutate(environment_support = recode_factor(environment_support, "Don't know" = NA_character_)) %>%
-# Q 23 The confidentiality and right to privacy of students with diabetes are protected at school.
+ # Q 23 The confidentiality and right to privacy of students with diabetes are protected at school.
 mutate(privacy_protect = recode_factor(privacy_protect, "Don't know" = NA_character_)) %>%
-# Q 24 Students with diabetes are designated a safe place to keep their diabetes supplies, including their insulin pump if they remove it during physical activity.
+ # Q 24 Students with diabetes are designated a safe place to keep their diabetes supplies, including their insulin pump if they remove it during physical activity.
 mutate(place_pe = recode_factor(place_pe, "Don't know" = NA_character_)) %>%
-# Q 25 Blood glucose monitoring equipment, a quick-acting form of glucose, and other diabetes supplies in the first aid pack are available at all physical activity sites.
+ # Q 25 Blood glucose monitoring equipment, a quick-acting form of glucose, and other diabetes supplies in the first aid pack are available at all physical activity sites.
 mutate(aid_pe = recode_factor(aid_pe, "Don't know" = NA_character_))%>%
-# Q 26 Students with diabetes are allowed to monitor blood glucose levels and administer insulin in a PE class.
+ # Q 26 Students with diabetes are allowed to monitor blood glucose levels and administer insulin in a PE class.
 mutate(monitor_pe = recode_factor(monitor_pe, "Don't know" = NA_character_))%>%
-# Q 27 Teachers and staff are aware that hypoglycemia (low blood glucose) can occur during and after physical activity
+ # Q 27 Teachers and staff are aware that hypoglycemia (low blood glucose) can occur during and after physical activity
 mutate(hypoglycemia_pe = recode_factor(hypoglycemia_pe, "Don't know" = NA_character_)) %>%
-# Q 28 Students with diabetes are allowed to discontinue physical activity if hypoglycemia (low blood glucose) is suspected in a PE class.
+ # Q 28 Students with diabetes are allowed to discontinue physical activity if hypoglycemia (low blood glucose) is suspected in a PE class.
 mutate(discontinue_pe = recode_factor(discontinue_pe, "Don't know" = NA_character_))%>%
-# Q 29 Students with diabetes are encouraged to have the same level of participation in physical activities and sports as other students, except to meet their medical needs.
-mutate(participate_pe = recode_factor(participate_pe, "Don't know" = NA_character_)) %>%
-# Q 35 School nurse obtains materials and medical supplies (including the emergency supply kit) for performing diabetes care tasks from the parents/guardians, and designate a storage location for daily and emergency use.
+ # Q 29 Students with diabetes are encouraged to have the same level of participation in physical activities and sports as other students, except to meet their medical needs.
 mutate(nurse_tasks = recode_factor(nurse_tasks, "Don't know" = NA_character_))%>%
 # Q 30 School nurse obtains and reviews student’s doctor’s orders or current Diabetes Medical Management Plan (if available) along with other pertinent information from the student’s parent/guardian.
 mutate(nurse_dmmp = recode_factor(nurse_dmmp, "Don't know" = NA_character_))%>%
@@ -180,10 +180,6 @@ mutate(effect_teacher_parent
  = recode_factor(effect_teacher_parent
 , "Don't know" = NA_character_))%>%
 # Mental Health/ Right
-# Q 55 Student Stress Levels
-mutate(effect_stress
- = recode_factor(effect_stress
-, "Don't know" = NA_character_))%>%
 # Q 54 Student Bullying Prevention
 mutate(effect_bully
  = recode_factor(effect_bully
@@ -192,27 +188,16 @@ mutate(effect_bully
 # Q 50 Overall, how effective do you feel the diabetes management at your school has been?
 mutate(effect_overall
  = recode_factor(effect_overall
-, "Don't know" = NA_character_))%>%
+, "Don't know" = NA_character_))
 # No change
 # Slightly effective
 # Moderately effective
 # Very effective
 # Did not using the following outcomes yet.
-        
-# Q 51 Student Glycemic Control
-mutate(effect_glycemic
- = recode_factor(effect_glycemic
-, "Don't know" = NA_character_)) %>%
-# Q 52 Student Physical Health
-mutate(effect_physical
- = recode_factor(effect_physical
-, "Don't know" = NA_character_)) %>%
-# Q 53 Student Mental Health
-mutate(effect_mental
- = recode_factor(effect_mental
-, "Don't know" = NA_character_))
+
 
 summary(Survey_cleaned)
+
 ```
 
 
@@ -237,9 +222,6 @@ library(psych)
 Survey_Factor <- data.matrix(Survey_Factor)
 Survey_Factor <- 4 - Survey_Factor
 
-
-des = describe(Survey_Factor)
-knitr::kable(des[,c("min", "max", "mean", "median", "skew", "kurtosis")], main = "Data Summary")
 
 ```
 
@@ -296,6 +278,27 @@ save(poly_model, file = "poly_model")
 
 poly_model$loadings
 
+# Sorted output
+x <- print(poly_model$loadings, digits=2, cutoff=.3, sort=TRUE)
+
+str(x)
+as.table(x)
+x
+
+# To abstract the loading table 
+# library(readxl)
+# EFA <- read_excel("C:/Users/lidan/Desktop/ADA + RM/EFA.xlsx")
+
+
+# To print out the loading table
+
+# install.packages("kableExtra")
+library(kableExtra)
+
+#EFA %>%
+#  kbl(caption = "Factor Loadings") %>%
+# kable_classic(full_width = F, html_font = "Cambria")
+
 ```
 
 
@@ -305,11 +308,10 @@ load("poly_model")
 # Cluster analysis plot
 fa.diagram(poly_model)
 
-
 ```
 
 
-```{r}
+```{r warning= FALSE}
 # After checking with the survey questions with more than one loading on factors, I decided to delete those questions with split factors and re-run the analysis.
 # 2, 4, 17, 18, 20, 22
 poly_model1 = fa(Survey_Factor[, -c(2, 4, 17, 18, 20, 22)], nfactor=4, cor="poly", fm="mle", rotate = "none")
@@ -331,7 +333,7 @@ fa.diagram(poly_model1, Phi=NULL,fe.results=NULL,sort=TRUE,labels=NULL,cut=.3,
 
 ```{r warning = FALSE}
 
-# Reliability
+# Reliability Checking
 # Results is not good due to small sample size
 factor1TDP = c(2, 4:9, 15:17)
 factor2Plan = c(13, 18)
@@ -343,7 +345,12 @@ psych::alpha(Survey_Factor[, factor3Nurse])
 psych::alpha(Survey_Factor[, factor4Communication])
 
 
+
 ```
+
+
+
+
 ```{r warning= FALSE}
 
 Survey_cleaned$f1TDP = apply(Survey_Factor[, factor1TDP], 1, mean)
@@ -352,39 +359,251 @@ Survey_cleaned$f3Nurse = apply(Survey_Factor[, factor3Nurse], 1, mean)
 Survey_cleaned$f4Communication = apply(Survey_Factor[, factor4Communication], 1, mean)
 
 
-table(Survey_cleaned$f3Nurse)
+summary(Survey_cleaned$f1TDP)
+summary(Survey_cleaned$f2Plan)
+summary(Survey_cleaned$f3Nurse)
+
 
 ```
-```{r warning=FALSE}
-Complete <- Survey_cleaned %>%
-  drop_na()
 
-MissingRate <-  1- nrow(Complete)/nrow(Survey_cleaned)
-#Look at missing rate
-MissingRate
+```{r}
 
+sum(is.na(Survey_cleaned))
+library(VIM)
+library(mice)
+library(lattice)
+imp2 <- mice(Survey_cleaned, m=5, seed=123)
+imp2
+```
+
+# Descriptive/ Summary Statistics/ Data Visualization
+```{r warning = FALSE}
+
+
+# Integrating the imputed data
+pacman::p_load(readr, tidyverse, nnet, MASS, funModeling, brant)
+imp2$imp2$tdp_assist
+Survey_cleaned<- mice::complete(imp2,1)
+
+
+# Histogram for the DV: Overall effectiveness of school diabetes care.
+
+ggplot(data = Survey_cleaned, aes(x = effect_overall)) +
+  geom_bar(binwidth = 2, color = "Light Blue", fill = "Light Blue") +
+  labs(x = "Overall Effectiveness", title = "Histogram: Outcome Variable Overall Effectiveness")
+
+ggplot(data = Survey_cleaned, aes(x = effect_student)) +
+  geom_bar(binwidth = 2, color = "Light Blue", fill = "Light Blue") +
+  labs(x = "Effectiveness of Students' Health Status", title = "Histogram: Outcome Variable Students Health Effectiveness")
+
+ggplot(data = Survey_cleaned, aes(x = effect_parent)) +
+  geom_bar(binwidth = 2, color = "Light Blue", fill = "Light Blue") +
+  labs(x = "effect_overall", title = "Histogram: Outcome Variable Parents' Engagement")
+
+
+# Four IVs by DV
+ggplot(data = Survey_cleaned, aes(x = f1TDP, color = effect_overall)) +
+  geom_freqpoly(binwidth=1) +
+  labs(x = "Factor1 value", title = "Factor1:Trained Diabetes Personnel by Outcome")
+
+ggplot(data = Survey_cleaned, aes(x = f2Plan, color = effect_overall)) +
+  geom_freqpoly(binwidth=1) +
+  labs(x = "Factor2 value", title = "Factor2: Medical Plan by Outcome")
+
+ggplot(data = Survey_cleaned, aes(x = f3Nurse, color = effect_overall)) +
+  geom_freqpoly(binwidth=1) +
+  labs(x = "Factor3 value", title = "Factor3: Nurses' Role by Outcome")
+
+ggplot(data = Survey_cleaned, aes(x = f4Communication, color = effect_overall)) +
+  geom_freqpoly(binwidth=1) +
+  labs(x = "Factor4 value", title = "Factor4: Communication by Outcome")
+
+# Summary statistics by Dv
+library(psych)
+Summary <- describeBy(f1TDP + f2Plan + f3Nurse + f4Communication ~ effect_overall, mat = TRUE, data = Survey_cleaned)
+Summary
+
+
+
+Summary %>%
+  kbl(caption = "Summary Statistics") %>%
+  kable_classic(full_width = F, html_font = "Cambria")
+
+```
+
+
+# Modeling 1: Logistic regresssions
+
+```{r warning=FALSE }
+# Logistic models should be first models:
+
+Survey_cleaned1 <- Survey_cleaned %>%
+  mutate(effect_overall = recode(.x = effect_overall,
+                         `No change` = '0',
+                         `Moderately effective` = '0',
+                         `Slightly effective` = '0',
+                         `Very effective` = '1'))
+
+
+# Data Visualization for binary variable:
+
+Survey_cleaned1 %>% 
+  drop_na(c(effect_overall, f1TDP, f2Plan, f3Nurse, f4Communication)) %>% 
+  ggplot(aes(x = effect_overall, y = f1TDP)) +
+      geom_boxplot(aes(fill = effect_overall)) +
+      labs(x = "effect_overall", y = "Evaluation on Trained Diabetes Personnel") +
+      theme_bw()
+
+Survey_cleaned1 %>% 
+  ggplot(aes(x = effect_overall, y = f2Plan)) +
+      geom_boxplot(aes(fill = effect_overall)) +
+      labs(x = "Overall Effect ", y = "Medical Plan Development") +
+      theme_bw()
+
+# Table 1
+
+Summary1 <- describeBy(f1TDP + f2Plan + f3Nurse + f4Communication + race + gender + S_T_Ratio + StudentN ~ effect_overall, mat = TRUE, data = Survey_cleaned1)
+Summary1
+
+Summary1 %>%
+  kbl(caption = "Summary Statistics") %>%
+  kable_classic(full_width = F, html_font = "Cambria")  
+
+# 
+Survey_cleaned1 %>% 
+ggplot(aes(x = effect_overall, y = f3Nurse)) +
+      geom_boxplot(aes(fill = effect_overall)) +
+      labs(x = "effect_overall", y = "Nurses Performance") +
+      theme_bw()
+
+Survey_cleaned1 %>% 
+  ggplot(aes(x = effect_overall, y = f4Communication)) +
+      geom_boxplot(aes(fill = effect_overall)) +
+      labs(x = "effect_overall", y = "Communication among stakeholders") +
+      theme_bw()
+
+
+# Table 1 for logistic regression
+
+# install.packages("tableone") 
+
+library(tableone)
+
+run_tableone <- function(df, listVars, catVars, strata) {
+  x <- CreateTableOne(vars = listVars, data = df, factorVars = catVars, strata=strata)
+  as.data.frame(print(x)) %>%
+    add_rownames("Name")
+    
+}
+
+
+Table1 <- Survey_cleaned1 %>% 
+  run_tableone(c("StudentN", "S_T_Ratio", "f1TDP", "f2Plan", "f3Nurse",  "f4Communication"), c("race", "gender"),c("effect_overall"))
+
+Table1
+
+# Race
+
+tbl <- table(Survey_cleaned1$effect_overall,Survey_cleaned1$race)
+tbl
+prop.table(tbl)
+
+chisq.test(Survey_cleaned1$effect_overall,Survey_cleaned1$race)
+# Gender
+
+tbl1 <- table(Survey_cleaned1$effect_overall,Survey_cleaned1$gender)
+tbl1
+prop.table(tbl1)
+chisq.test(Survey_cleaned1$effect_overall,Survey_cleaned1$gender)
+
+
+# Full model with covariances/controls
+summary(Survey_cleaned1$effect_overall)
+
+Logit <- glm(effect_overall ~ f1TDP + f2Plan + f3Nurse + f4Communication + race + gender + S_T_Ratio + StudentN, data=Survey_cleaned1, family = binomial)
+
+summary(Logit)
+
+OR <-exp(cbind(OR = coef(Logit), confint(Logit))) #calculate ORs and 95% CIs
+OR  #print ORs and 95% CIs
+
+Logit0 <- glm(effect_overall ~ f1TDP + f2Plan + f3Nurse + f4Communication, data=Survey_cleaned1, family = binomial)
+
+summary(Logit0)
+
+
+Logit1 <- glm(effect_overall ~ race + gender + S_T_Ratio + StudentN, data=Survey_cleaned1, family = binomial)
+
+
+
+
+# Model performance checking 
+library("performance")
+library("see")
+
+# Multi-colinearity
+
+car::vif(Logit)
+car::vif(Logit0)
+
+
+library("jtools")
+library("knitr")
+library("rmarkdown")
+
+summ(Logit)
+summ(Logit0)
+summ(Logit1)
+
+# Other model fit and model performance measures
+check_model(Logit)
+
+check_model(Logit0)
+
+check_model(Logit1)
+
+compare_performance(Logit0, Logit, rank = TRUE)
+
+compare_performance(Logit1, Logit, rank = TRUE)
+
+```
+
+
+# Multi-nominal Regressions
+```{r}
+
+# Multinominal models with/without covariances
 
 pacman::p_load(readr, tidyverse, nnet, MASS, funModeling, brant)
 
-summary(Complete$effect_overall)
-levels(Complete$effect_overall)
-
-Complete$effect_overall <- relevel(Complete$effect_overall, ref = "Slightly effective")
-
-mod <- multinom(effect_overall ~ f1TDP + f2Plan + f3Nurse + f4Communication + effect_stress + gender + race + effect_physical + effect_mental, data=Complete)
+mod <- multinom(effect_overall ~ f1TDP + f2Plan + f3Nurse + f4Communication + race + gender + S_T_Ratio + StudentN, data=Survey_cleaned)
+# 
 
 
 summary(mod)
+
 exp(coef(mod))
+
 exp(confint(mod, level=0.95))
 
+z <- summary(mod)$coefficients/summary(mod)$standard.errors
+p <- (1- pnorm(abs(z), 0, 1)) *2
+p
 
+
+
+mod0 <- multinom(effect_overall ~ f1TDP + f2Plan + f3Nurse + f4Communication, data=Survey_cleaned)
+
+summary(mod0)
+exp(coef(mod0))
+
+exp(confint(mod0, level=0.95))
+
+z0 <- summary(mod0)$coefficients/summary(mod0)$standard.errors
+p0 <- (1- pnorm(abs(z), 0, 1)) *2
+p0
 
 ```
-
-
-
-
 
 
 
